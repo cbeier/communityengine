@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
     activities = Activity.since(options[:since]).find(:all, 
       :select => 'activities.user_id, count(*) as count', 
       :group => 'activities.user_id', 
-      :conditions => "#{options[:require_avatar] ? ' users.avatar_id IS NOT NULL' : nil}", 
+      :conditions => "#{options[:require_avatar] ? ' users.avatar_id IS NOT NULL AND' : nil} users.activated_at IS NOT NULL", 
       :order => 'count DESC', 
       :joins => "LEFT JOIN users ON users.id = activities.user_id",
       :limit => options[:limit]
@@ -193,7 +193,7 @@ class User < ActiveRecord::Base
   
   def self.recent_activity(page = {}, options = {})
     page.reverse_merge! :size => 10, :current => 1
-    Activity.recent.find(:all, :page => page, *options)      
+    Activity.recent.find(:all, :select => 'activities.*', :conditions => "users.activated_at IS NOT NULL", :joins => "LEFT JOIN users ON users.id = activities.user_id", :page => page, *options)      
   end
 
   def self.currently_online
