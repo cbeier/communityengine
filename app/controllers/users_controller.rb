@@ -14,6 +14,7 @@ class UsersController < BaseController
     end
   end    
 
+  require File.dirname(__FILE__) + '/../../config/initializers/mce_options.rb'
   uses_tiny_mce(:options => AppConfig.default_mce_options.merge({:editor_selector => "rich_text_editor"}), 
     :only => [:new, :create, :update, :edit, :welcome_about])
   uses_tiny_mce(:options => AppConfig.simple_mce_options, :only => [:show])
